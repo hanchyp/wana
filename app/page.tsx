@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SimBadge } from "@/components/Brand";
 import { EmergencyStrip, SiteFooter } from "@/components/Chrome";
+import { HeroVideo } from "@/components/HeroVideo";
 import { Icon, type IconName } from "@/components/Icon";
 import { LandingNav } from "@/components/LandingNav";
 import { LiveMap } from "@/components/LiveMap";
@@ -28,7 +29,6 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero foto full-bleed; nanti latar ini diganti video drone. */}
       <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden md:min-h-[780px]">
         <Image
           src="/photos/rawa-gambut-udara.jpg"
@@ -38,7 +38,8 @@ export default function Home() {
           sizes="100vw"
           className="-z-20 object-cover saturate-[1.2]"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0a1c12]/65 via-[#0a1c12]/45 to-[#0a1c12]/75" />
+        <HeroVideo />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0a1c12]/78 via-[#0a1c12]/65 to-[#0a1c12]/85" />
         <LandingNav />
         <div className="mx-auto flex w-full max-w-[900px] flex-col items-center px-6 pb-16 pt-28 text-center">
           <h1 className="mt-6 text-[40px] font-extrabold leading-[1.12] tracking-[-0.03em] text-white sm:text-6xl md:text-[72px] md:leading-[1.1]">
