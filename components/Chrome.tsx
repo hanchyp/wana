@@ -138,10 +138,6 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="mt-14 flex flex-col gap-2 border-t border-white/20 pt-5 font-mono text-xs font-medium text-[#b9d4b0] md:flex-row md:justify-between">
-          <p>© 2026 wana · Prototipe TECHNOVERSARY 2 · seluruh data adalah simulasi · Foto: Wikimedia Commons (CC)</p>
-          <p className="text-sun">WANA bukan layanan darurat · 112</p>
-        </div>
       </div>
     </footer>
   );

@@ -7,7 +7,7 @@ import { LandingNav } from "@/components/LandingNav";
 import { LiveMap } from "@/components/LiveMap";
 import { RegionalMap } from "@/components/Map";
 import { EvidenceLadder, IncidentTags } from "@/components/Status";
-import { getIncident, incidents } from "@/lib/incidents";
+import { getIncident } from "@/lib/incidents";
 
 const abilities: { icon: IconName; title: string; text: string; bg: string }[] = [
   { icon: "map", title: "Melihat", text: "laporan asap dan api di sekitarmu", bg: "bg-white" },
@@ -25,7 +25,6 @@ const steps = [
 export default function Home() {
   const featured = getIncident("pulang-pisau")!;
   const recent = ["pulang-pisau", "ketapang", "banjar"].map((id) => getIncident(id)!);
-  const active = incidents.filter((i) => !i.stale).length;
 
   return (
     <>
@@ -42,10 +41,6 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0a1c12]/65 via-[#0a1c12]/45 to-[#0a1c12]/75" />
         <LandingNav />
         <div className="mx-auto flex w-full max-w-[900px] flex-col items-center px-6 pb-16 pt-28 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/15 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
-            <span className="h-2 w-2 rounded-full bg-[#7ce08a]" />
-            {active} kejadian simulasi aktif · diperbarui 3 mnt lalu
-          </span>
           <h1 className="mt-6 text-[40px] font-extrabold leading-[1.12] tracking-[-0.03em] text-white sm:text-6xl md:text-[72px] md:leading-[1.1]">
             Pantau hutan.
             <br />
@@ -64,11 +59,7 @@ export default function Home() {
               Buka peta
             </Link>
           </div>
-          <p className="mt-6 font-mono text-[13px] font-medium text-[#cfe3c8]">Gratis · terbuka · digerakkan warga</p>
         </div>
-        <p className="absolute bottom-5 left-5 font-mono text-[10px] text-white/65 md:left-8 md:text-[11px]">
-          Rawa gambut, Kalimantan · foto R.A. Sugardiman/AusAID, CC BY 2.0
-        </p>
       </section>
 
       {/* Kemampuan */}
