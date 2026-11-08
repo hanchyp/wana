@@ -104,7 +104,7 @@ export function EmergencyStrip() {
 export function SiteFooter() {
   return (
     <footer className="relative isolate overflow-hidden text-white">
-      <Image src="/photos/sebangau-panorama.jpg" alt="" fill sizes="100vw" className="-z-20 object-cover" />
+      <Image src="/photos/sebangau-panorama.jpg" alt="" fill loading="eager" sizes="100vw" className="-z-20 object-cover" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-forest/80 via-forest/95 to-forest-deep" />
       <div className="mx-auto max-w-[1312px] px-5 pb-8 pt-14 md:px-8 md:pt-20">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">

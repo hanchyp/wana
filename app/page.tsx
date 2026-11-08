@@ -4,6 +4,7 @@ import { SimBadge } from "@/components/Brand";
 import { EmergencyStrip, SiteFooter } from "@/components/Chrome";
 import { HeroVideo } from "@/components/HeroVideo";
 import { Icon, type IconName } from "@/components/Icon";
+import { LandingIntro } from "@/components/LandingIntro";
 import { LandingNav } from "@/components/LandingNav";
 import { LandingScrollMotion } from "@/components/LandingScrollMotion";
 import { LiveMap } from "@/components/LiveMap";
@@ -29,7 +30,7 @@ export default function Home() {
   const recent = ["pulang-pisau", "ketapang", "banjar"].map((id) => getIncident(id)!);
 
   return (
-    <>
+    <LandingIntro>
       <LandingScrollMotion />
       <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden md:min-h-[780px]">
         <Image
@@ -100,7 +101,7 @@ export default function Home() {
               </p>
               <p className="text-[13px] font-extrabold text-earth">Apa</p>
               <div data-landing-reveal="curtain" className="relative h-52 overflow-hidden rounded-2xl border-2 border-forest md:h-72">
-                <Image src="/photos/sebangau-rawa.jpg" alt="Foto simulasi pengamatan asap di lahan gambut" fill sizes="(min-width: 768px) 540px, 100vw" className="object-cover" />
+                <Image src="/photos/sebangau-rawa.jpg" alt="Foto simulasi pengamatan asap di lahan gambut" fill loading="eager" sizes="(min-width: 768px) 540px, 100vw" className="object-cover" />
                 <span className="absolute left-[55%] top-[12%] h-36 w-40 rounded-full bg-[#e9e6e0]/80 blur-2xl" aria-hidden="true" />
                 <span className="absolute bottom-3 left-3 rounded-full bg-ink/85 px-3 py-1.5 font-mono text-xs text-white">
                   Foto simulasi · EXIF lokasi dihapus
@@ -195,6 +196,6 @@ export default function Home() {
 
       <EmergencyStrip />
       <SiteFooter />
-    </>
+    </LandingIntro>
   );
 }

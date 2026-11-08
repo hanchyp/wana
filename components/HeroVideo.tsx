@@ -15,6 +15,8 @@ function BackgroundVideo() {
   return (
     <video
       src="/videos/hero-hutan-satwa.mp4"
+      data-landing-video
+      preload="auto"
       autoPlay
       muted
       loop

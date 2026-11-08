@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-export function Logo({ tone = "dark", size = "md" }: { tone?: "dark" | "light"; size?: "sm" | "md" }) {
+export function Logo({ tone = "dark", size = "md", decorative = false }: { tone?: "dark" | "light"; size?: "sm" | "md"; decorative?: boolean }) {
   const box = size === "sm" ? "h-9 w-9 rounded-xl" : "h-10 w-10 rounded-[13px]";
-  return (
-    <Link href="/" className="inline-flex items-center gap-2.5" aria-label="WANA, ke beranda">
+  const mark = (
+    <>
       <span
         className={`${box} grid place-items-center border-2 bg-leaf ${tone === "light" ? "border-white" : "border-forest"}`}
       >
@@ -23,7 +23,12 @@ export function Logo({ tone = "dark", size = "md" }: { tone?: "dark" | "light"; 
       >
         wana
       </span>
-    </Link>
+    </>
+  );
+  return decorative ? (
+    <span aria-hidden="true" className="inline-flex items-center gap-2.5">{mark}</span>
+  ) : (
+    <Link href="/" className="inline-flex items-center gap-2.5" aria-label="WANA, ke beranda">{mark}</Link>
   );
 }
 
