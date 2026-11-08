@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/Brand";
 import { Icon, type IconName } from "@/components/Icon";
-import { RegionalMap } from "@/components/Map";
+import { LiveMap } from "@/components/LiveMap";
 import { getIncident, type Indication } from "@/lib/incidents";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
+type LngLat = [number, number];
 const stepNames = ["Pengamatan", "Lokasi", "Tinjau"] as const;
 const focus = getIncident("pulang-pisau")!;
 
@@ -22,6 +24,8 @@ export function LaporForm({ relatedId, relatedTitle }: { relatedId?: string; rel
   const [agree, setAgree] = useState(true);
   const [bannerOpen, setBannerOpen] = useState(true);
   const [note, setNote] = useState("Asap putih naik dari arah kanal di timur desa, sejak sekitar 13:50.");
+  const [pin, setPin] = useState<LngLat>([focus.lon, focus.lat]);
+  const isWide = useMediaQuery("(min-width: 768px)");
 
   const next = () => {
     if (step < 2) setStep(step + 1);
@@ -71,7 +75,9 @@ export function LaporForm({ relatedId, relatedTitle }: { relatedId?: string; rel
                   setNote={setNote}
                 />
               )}
-              {step === 1 && <StepLocation locMode={locMode} setLocMode={setLocMode} />}
+              {step === 1 && (
+                <StepLocation locMode={locMode} setLocMode={setLocMode} pin={pin} onPinChange={setPin} showMap={!isWide} />
+              )}
               {step === 2 && (
                 <StepReview
                   indication={indication}
@@ -103,9 +109,9 @@ export function LaporForm({ relatedId, relatedTitle }: { relatedId?: string; rel
             </footer>
           </div>
         </div>
-        {step === 1 && (
-          <div className="relative hidden flex-1 md:block">
-            <LocationPicker big />
+        {step === 1 && isWide && (
+          <div className="relative flex-1">
+            <LocationPicker big pin={pin} onPinChange={setPin} />
           </div>
         )}
       </div>
@@ -254,7 +260,20 @@ function StepObservation(props: {
   );
 }
 
-function StepLocation({ locMode, setLocMode }: { locMode: "titik" | "arah"; setLocMode: (v: "titik" | "arah") => void }) {
+function StepLocation({
+  locMode,
+  setLocMode,
+  pin,
+  onPinChange,
+  showMap,
+}: {
+  locMode: "titik" | "arah";
+  setLocMode: (v: "titik" | "arah") => void;
+  pin: LngLat;
+  onPinChange: (v: LngLat) => void;
+  showMap: boolean;
+}) {
+  const moved = Math.abs(pin[0] - focus.lon) > 0.05 || Math.abs(pin[1] - focus.lat) > 0.05;
   const modes = [
     { value: "titik" as const, title: "Saya tahu perkiraan titik sumber", hint: "Taruh titik atau atur area di peta" },
     { value: "arah" as const, title: "Saya hanya tahu posisi saya dan arahnya", hint: "Pilih arah asap dan perkiraan jarak, atau “tidak tahu”" },
@@ -294,16 +313,20 @@ function StepLocation({ locMode, setLocMode }: { locMode: "titik" | "arah"; setL
           </div>
         </div>
       )}
-      <div className="h-[290px] overflow-hidden rounded-[20px] md:hidden">
-        <LocationPicker />
-      </div>
+      {showMap && (
+        <div className="h-[290px] overflow-hidden rounded-[20px]">
+          <LocationPicker pin={pin} onPinChange={onPinChange} />
+        </div>
+      )}
       <div className="flex items-center gap-3 rounded-[18px] border border-line bg-white p-4">
         <Icon name="pin" size={22} className="shrink-0 text-leaf" />
         <div className="flex-1">
-          <p className="text-[15px] font-extrabold">Sekitar Pulang Pisau, Kalimantan Tengah</p>
-          <p className="font-mono text-xs text-ink-2">2.85° LS · 114.05° BT · area ±1 km</p>
+          <p className="text-[15px] font-extrabold">{moved ? "Titik yang kamu pilih" : "Sekitar Pulang Pisau, Kalimantan Tengah"}</p>
+          <p className="font-mono text-xs text-ink-2">{formatLngLat(pin)} · area ±1 km</p>
         </div>
-        <button type="button" className="text-sm font-bold text-leaf">Ubah</button>
+        <button type="button" onClick={() => onPinChange([focus.lon, focus.lat])} className="text-sm font-bold text-leaf">
+          Reset
+        </button>
       </div>
       <p className="text-[13px] font-semibold leading-relaxed text-ink-2 md:text-sm">
         Lokasi perangkatmu tidak otomatis dianggap lokasi api. Titik ini ditandai sebagai perkiraan pelapor, bukan hasil validasi sistem.
@@ -312,17 +335,24 @@ function StepLocation({ locMode, setLocMode }: { locMode: "titik" | "arah"; setL
   );
 }
 
-function LocationPicker({ big = false }: { big?: boolean }) {
+function LocationPicker({ big = false, pin, onPinChange }: { big?: boolean; pin: LngLat; onPinChange: (v: LngLat) => void }) {
   const r = big ? 100 : 60;
   return (
-    <RegionalMap focus={focus} className="h-full">
+    <LiveMap
+      center={pin}
+      zoom={big ? 11 : 10.5}
+      onCenterChange={onPinChange}
+      controls={big ? "full" : "locate"}
+      controlsClassName={big ? "absolute right-4 top-20" : "absolute bottom-4 right-4"}
+      className="h-full w-full"
+    >
       <span
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-dashed border-leaf bg-leaf/15"
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-dashed border-leaf bg-leaf/15"
         style={{ width: r * 2, height: r * 2 }}
         aria-hidden="true"
       />
       <svg
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full drop-shadow-[0_6px_6px_rgb(19_38_27/0.3)]"
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full drop-shadow-[0_6px_6px_rgb(19_38_27/0.3)]"
         width={big ? 48 : 36}
         height={big ? 70 : 52}
         viewBox="0 0 48 70"
@@ -331,15 +361,16 @@ function LocationPicker({ big = false }: { big?: boolean }) {
         <path d="M24 68C24 68 2 43 2 24A22 22 0 0 1 46 24C46 43 24 68 24 68Z" fill="#1e8a4c" stroke="#fff" strokeWidth="3.5" />
         <circle cx="24" cy="24" r="9" fill="#fff" />
       </svg>
-      <span className={`absolute left-1/2 top-4 inline-flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 font-bold ${big ? "bg-ink/90 text-sm text-white" : "bg-white/95 text-xs text-ink"}`}>
+      <span className={`pointer-events-none absolute left-1/2 top-4 inline-flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 font-bold ${big ? "bg-ink/90 text-sm text-white" : "bg-white/95 text-xs text-ink"}`}>
         {big && <Icon name="pin" size={16} />}
-        {big ? "Geser peta atau seret lingkaran untuk mengatur area" : "Geser peta untuk menaruh titik"}
+        {big ? "Geser peta untuk menaruh titik di tengah lingkaran" : "Geser peta untuk menaruh titik"}
       </span>
-      <button type="button" className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-white shadow-soft" aria-label="Gunakan lokasi saya">
-        <Icon name="locate" size={20} />
-      </button>
-    </RegionalMap>
+    </LiveMap>
   );
+}
+
+function formatLngLat([lon, lat]: LngLat) {
+  return `${Math.abs(lat).toFixed(3)}° ${lat < 0 ? "LS" : "LU"} · ${Math.abs(lon).toFixed(3)}° ${lon < 0 ? "BB" : "BT"}`;
 }
 
 function StepReview(props: {

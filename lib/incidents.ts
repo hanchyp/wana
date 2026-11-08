@@ -276,13 +276,6 @@ export const indicationLabel: Record<Indication, string> = {
   keduanya: "Asap dan api",
 };
 
-// Proyeksi peta nasional (public/maps/nat-desktop.svg, 1100 x 435).
-export const NATIONAL = { width: 1100, height: 435 };
-export function projectNational(lon: number, lat: number) {
-  const k = 20.833333 * 1.1;
-  return { x: (lon - 94) * k, y: (7.5 - lat) * k };
-}
-
 // Proyeksi peta Kalimantan (public/maps/map-kalteng-rich.svg, 1100 x 800).
 export const REGIONAL = { width: 1100, height: 800 };
 export function projectRegional(lon: number, lat: number) {

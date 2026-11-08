@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { Incident } from "@/lib/incidents";
-import { NATIONAL, REGIONAL, projectNational, projectRegional, regionalTowns } from "@/lib/incidents";
+import { REGIONAL, projectRegional, regionalTowns } from "@/lib/incidents";
 import { Icon } from "./Icon";
 
 type MarkerProps = {
@@ -62,90 +62,7 @@ export function IncidentMarker({ incident, selected, onSelect, style }: MarkerPr
   );
 }
 
-export function ClusterMarker({ count, style, onClick }: { count: number; style?: CSSProperties; onClick?: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="absolute z-10 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-forest bg-white text-lg font-extrabold text-forest shadow-soft transition hover:scale-105"
-      style={style}
-      aria-label={`${count} kejadian di area ini`}
-    >
-      <span className="absolute inset-1 rounded-full border border-forest/30" aria-hidden="true" />
-      {count}
-    </button>
-  );
-}
-
-/** Peta nasional dengan penanda dalam persen, jadi ikut melebar dengan wadahnya. */
-export function NationalMap({
-  items,
-  selectedId,
-  onSelect,
-  cluster,
-  children,
-}: {
-  items: Incident[];
-  selectedId?: string;
-  onSelect?: (id: string) => void;
-  cluster?: { ids: string[]; onClick?: () => void };
-  children?: ReactNode;
-}) {
-  const clustered = new Set(cluster?.ids ?? []);
-  const pct = (lon: number, lat: number) => {
-    const p = projectNational(lon, lat);
-    return { left: `${(p.x / NATIONAL.width) * 100}%`, top: `${(p.y / NATIONAL.height) * 100}%` };
-  };
-  const clusterItems = items.filter((i) => clustered.has(i.id));
-  const centroid =
-    clusterItems.length > 0
-      ? pct(
-          clusterItems.reduce((s, i) => s + i.lon, 0) / clusterItems.length,
-          clusterItems.reduce((s, i) => s + i.lat, 0) / clusterItems.length,
-        )
-      : null;
-
-  return (
-    <div className="relative w-full" style={{ aspectRatio: `${NATIONAL.width} / ${NATIONAL.height}` }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/maps/nat-desktop.svg" alt="" className="absolute inset-0 h-full w-full select-none" draggable={false} />
-      {items
-        .filter((i) => !clustered.has(i.id) || i.id === selectedId)
-        .map((i) => (
-          <IncidentMarker key={i.id} incident={i} selected={i.id === selectedId} onSelect={onSelect} style={pct(i.lon, i.lat)} />
-        ))}
-      {centroid && clusterItems.length > 1 && !clusterItems.some((i) => i.id === selectedId) && (
-        <ClusterMarker count={clusterItems.length} style={centroid} onClick={cluster?.onClick} />
-      )}
-      {children}
-    </div>
-  );
-}
-
-/** Peta kecil berpusat pada satu kejadian: peta Kalimantan bila tercakup, selain itu potongan peta nasional. */
-export function FocusMap({ incident, className = "", zoom = 2.4 }: { incident: Incident; className?: string; zoom?: number }) {
-  const inBorneo = incident.lon > 108.5 && incident.lon < 118.5 && incident.lat > -4.8 && incident.lat < 1;
-  if (inBorneo) {
-    return (
-      <RegionalMap
-        focus={incident}
-        items={[incident]}
-        area={incident.precision === "area" ? { lon: incident.lon, lat: incident.lat, radius: 26 + incident.radiusKm * 16 } : undefined}
-        className={className}
-      />
-    );
-  }
-  const p = projectNational(incident.lon, incident.lat);
-  return (
-    <div className={`relative overflow-hidden bg-water ${className}`}>
-      <div className="absolute" style={{ width: NATIONAL.width * zoom, left: `calc(50% - ${p.x * zoom}px)`, top: `calc(50% - ${p.y * zoom}px)` }}>
-        <NationalMap items={[incident]} />
-      </div>
-    </div>
-  );
-}
-
-/** Peta Kalimantan bertekstur, berpusat pada satu titik. */
+/** Peta Kalimantan bertekstur (statis), berpusat pada satu titik. Dipakai untuk cuplikan ringan di kartu. */
 export function RegionalMap({
   focus,
   items = [],

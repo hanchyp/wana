@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { SimBadge } from "@/components/Brand";
 import { AppBar } from "@/components/Chrome";
 import { Icon } from "@/components/Icon";
-import { FocusMap } from "@/components/Map";
+import { LiveMap } from "@/components/LiveMap";
 import { EvidenceLadder, Tag } from "@/components/Status";
 import { conditionLabel, getIncident, incidents, type TimelineEntry } from "@/lib/incidents";
 
@@ -31,6 +31,9 @@ const checks = [
   "Waktu pengamatan dan perkiraan lokasi masuk akal",
   "Tidak ditemukan unggahan ulang foto yang sama",
 ];
+
+// Semua id sudah diketahui saat build; halaman boleh menunggu params tanpa shell instan.
+export const instant = false;
 
 export default async function KejadianPage({ params }: PageProps<"/kejadian/[id]">) {
   const { id } = await params;
@@ -155,7 +158,17 @@ export default async function KejadianPage({ params }: PageProps<"/kejadian/[id]
               <StatusBody />
             </section>
             <section className="card overflow-hidden">
-              <FocusMap incident={incident} className="h-56" />
+              <LiveMap
+                center={[incident.lon, incident.lat]}
+                zoom={incident.precision === "area" ? 10 : 11}
+                incidents={[incident]}
+                selectedId={incident.id}
+                area={incident.precision === "area" ? { lon: incident.lon, lat: incident.lat, radiusKm: incident.radiusKm } : undefined}
+                cooperative
+                controls="zoom"
+                controlsClassName="absolute right-3 top-3"
+                className="h-60 w-full"
+              />
               <div className="p-5">
                 <p className="text-base font-extrabold">
                   {incident.precision === "area" ? `Area perkiraan sumber · ±${incident.radiusKm.toLocaleString("id")} km` : "Titik perkiraan pelapor"}

@@ -5,14 +5,15 @@ import { useState } from "react";
 import { SimBadge } from "@/components/Brand";
 import { AppBar, MobileTabBar } from "@/components/Chrome";
 import { Icon } from "@/components/Icon";
-import { NationalMap } from "@/components/Map";
+import { INDONESIA_VIEW, LiveMap } from "@/components/LiveMap";
 import { EvidenceLadder, IncidentTags, IndicationGlyph, ladderText } from "@/components/Status";
-import { NATIONAL, featuredId, incidents, projectNational, type Incident } from "@/lib/incidents";
+import { featuredId, incidents, type Incident } from "@/lib/incidents";
+import { useIsDesktop } from "@/lib/useMediaQuery";
 
-const sumatraCluster = ["pelalawan", "muaro-jambi", "ogan-komering-ilir"];
 const filters = ["Jenis", "Pemeriksaan", "Kondisi"];
 
 export function PantauView() {
+  const isDesktop = useIsDesktop();
   const [selectedId, setSelectedId] = useState<string | undefined>(featuredId);
   const [view, setView] = useState<"peta" | "daftar">("peta");
   const selected = incidents.find((i) => i.id === selectedId);
@@ -49,31 +50,29 @@ export function PantauView() {
 
         {/* Peta */}
         <main className="relative min-w-0 flex-1 overflow-hidden bg-water">
-          <div className="hidden lg:block">
-            <div className="absolute left-1/2 top-[46%] w-[108%] min-w-[900px] -translate-x-1/2 -translate-y-1/2">
-              <NationalMap
-                items={incidents}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-                cluster={{ ids: sumatraCluster, onClick: () => setSelectedId("pelalawan") }}
-              >
-              </NationalMap>
-            </div>
-            {selected && <Popover incident={selected} onClose={() => setSelectedId(undefined)} />}
-          </div>
-          <MobileMap selected={selected} onSelect={setSelectedId} />
+          <LiveMap
+            center={INDONESIA_VIEW.center}
+            zoom={INDONESIA_VIEW.zoom}
+            incidents={incidents}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            followSelected
+            selectedZoom={isDesktop ? 6.5 : 7}
+            padding={isDesktop ? { right: 380, bottom: 40 } : { top: 170, bottom: 330 }}
+            controls={isDesktop ? "full" : "locate"}
+            controlsClassName={isDesktop ? "absolute right-4 top-4" : "absolute right-4 top-[190px]"}
+            className="h-full w-full"
+          />
+          {isDesktop && selected && <Popover incident={selected} onClose={() => setSelectedId(undefined)} />}
+          <MobileOverlay selected={selected} />
 
-          <div className="pointer-events-none absolute inset-x-0 top-0 hidden items-start justify-between p-4 lg:flex">
+          <div className="pointer-events-none absolute left-4 top-4 hidden lg:block">
             <span className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-[13px] font-semibold shadow-soft">
               <span className="h-2 w-2 rounded-full bg-leaf" />
               Diperbarui 3 mnt lalu · hanya laporan yang lolos pemeriksaan
             </span>
-            <MapControls />
           </div>
           <Legend />
-          <div className="absolute bottom-4 right-4 hidden rounded-lg bg-white/90 px-2.5 py-1.5 font-mono text-[11px] lg:block">
-            <span className="block h-1 w-24 border-x-[1.5px] border-b-[1.5px] border-ink" />0 · · · · 200 km
-          </div>
 
           <MobileSheet view={view} onViewChange={setView} selected={selected} onSelect={setSelectedId} />
         </main>
@@ -174,28 +173,6 @@ function Popover({ incident, onClose }: { incident: Incident; onClose: () => voi
   );
 }
 
-function MapControls() {
-  return (
-    <div className="pointer-events-auto flex flex-col gap-2.5">
-      <div className="flex w-12 flex-col items-center rounded-full bg-white shadow-soft">
-        <button type="button" className="grid h-12 w-12 place-items-center" aria-label="Perbesar">
-          <Icon name="plus" size={20} />
-        </button>
-        <span className="h-px w-6 bg-line" />
-        <button type="button" className="grid h-12 w-12 place-items-center" aria-label="Perkecil">
-          <Icon name="minus" size={20} />
-        </button>
-      </div>
-      <button type="button" className="grid h-12 w-12 place-items-center rounded-full bg-white shadow-soft" aria-label="Gunakan lokasi saya">
-        <Icon name="locate" size={20} />
-      </button>
-      <button type="button" className="grid h-12 w-12 place-items-center rounded-full bg-white shadow-soft" aria-label="Lapisan peta">
-        <Icon name="layers" size={20} />
-      </button>
-    </div>
-  );
-}
-
 function Legend() {
   const rows = [
     { dot: "bg-fire ring-2 ring-white", label: "Indikasi api" },
@@ -220,21 +197,15 @@ function Legend() {
   );
 }
 
-/** Peta mobile: potongan peta nasional berskala asli, berpusat pada kejadian terpilih. */
-function MobileMap({ selected, onSelect }: { selected?: Incident; onSelect: (id: string) => void }) {
-  const focus = projectNational((selected ?? incidents[0]).lon, (selected ?? incidents[0]).lat);
+/** Kontrol yang mengambang di atas peta pada mobile. */
+function MobileOverlay({ selected }: { selected?: Incident }) {
   return (
-    <div className="absolute inset-0 lg:hidden">
-      <div
-        className="absolute transition-[left,top] duration-500"
-        style={{ width: NATIONAL.width * 1.6, left: `calc(50% - ${focus.x * 1.6}px)`, top: `calc(32% - ${focus.y * 1.6}px)` }}
-      >
-        <NationalMap items={incidents} selectedId={selected?.id} onSelect={onSelect} />
-      </div>
-      <div className="absolute inset-x-4 top-3 space-y-2.5">
+    <div className="pointer-events-none absolute inset-0 lg:hidden">
+      <div className="absolute inset-x-4 top-3 space-y-2.5 [&>*]:pointer-events-auto">
         <label className="flex h-[54px] items-center gap-2.5 rounded-full bg-white pl-[18px] pr-1.5 shadow-float">
           <Icon name="search" size={20} className="text-ink-2" />
           <input
+            key={selected?.id}
             type="search"
             defaultValue={selected?.region ?? ""}
             placeholder="Cari wilayah"

@@ -4,6 +4,7 @@ import { SimBadge } from "@/components/Brand";
 import { EmergencyStrip, SiteFooter } from "@/components/Chrome";
 import { Icon, type IconName } from "@/components/Icon";
 import { LandingNav } from "@/components/LandingNav";
+import { LiveMap } from "@/components/LiveMap";
 import { RegionalMap } from "@/components/Map";
 import { EvidenceLadder, IncidentTags } from "@/components/Status";
 import { getIncident, incidents } from "@/lib/incidents";
@@ -120,11 +121,15 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-4">
               <p className="text-[13px] font-extrabold text-earth">Di mana</p>
-              <RegionalMap
-                focus={featured}
-                area={{ lon: featured.lon, lat: featured.lat, radius: 50 }}
-                items={[featured]}
-                className="h-48 rounded-2xl border-2 border-forest md:h-64"
+              <LiveMap
+                center={[featured.lon, featured.lat]}
+                zoom={9.5}
+                incidents={[featured]}
+                area={{ lon: featured.lon, lat: featured.lat, radiusKm: featured.radiusKm }}
+                cooperative
+                controls="zoom"
+                controlsClassName="absolute right-3 top-3"
+                className="h-48 w-full rounded-2xl border-2 border-forest md:h-64"
               />
               <p className="text-[15px] font-bold md:text-base">Area perkiraan di sekitar Pulang Pisau, Kalimantan Tengah</p>
               <p className="text-[13px] font-extrabold text-earth">Kapan</p>
