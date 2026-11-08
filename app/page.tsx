@@ -5,6 +5,7 @@ import { EmergencyStrip, SiteFooter } from "@/components/Chrome";
 import { HeroVideo } from "@/components/HeroVideo";
 import { Icon, type IconName } from "@/components/Icon";
 import { LandingNav } from "@/components/LandingNav";
+import { LandingScrollMotion } from "@/components/LandingScrollMotion";
 import { LiveMap } from "@/components/LiveMap";
 import { RegionalMap } from "@/components/Map";
 import { EvidenceLadder, IncidentTags } from "@/components/Status";
@@ -29,6 +30,7 @@ export default function Home() {
 
   return (
     <>
+      <LandingScrollMotion />
       <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden md:min-h-[780px]">
         <Image
           src="/photos/rawa-gambut-udara.jpg"
@@ -66,10 +68,10 @@ export default function Home() {
       {/* Kemampuan */}
       <section id="cara-kerja" className="bg-tint px-5 py-14 md:py-20">
         <div className="mx-auto max-w-[1312px]">
-          <h2 className="text-[26px] font-extrabold tracking-[-0.02em] md:text-center md:text-4xl">Dengan WANA, kamu bisa:</h2>
+          <h2 data-landing-reveal="text" className="text-[26px] font-extrabold tracking-[-0.02em] md:text-center md:text-4xl">Dengan WANA, kamu bisa:</h2>
           <ul className="mt-8 grid gap-5 md:mt-11 md:grid-cols-4 md:gap-8">
-            {abilities.map((a) => (
-              <li key={a.title} className="flex items-center gap-4 md:flex-col md:text-center">
+            {abilities.map((a, index) => (
+              <li key={a.title} data-landing-reveal="bounce" data-motion-order={index} className="flex items-center gap-4 md:flex-col md:text-center">
                 <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full border-2 border-forest ${a.bg} text-forest shadow-sticker-sm md:h-[100px] md:w-[100px]`}>
                   <Icon name={a.icon} size={32} className="md:h-11 md:w-11" />
                 </span>
@@ -86,7 +88,7 @@ export default function Home() {
       {/* Contoh satu pengamatan */}
       <section id="cerita" className="px-5 py-14 md:py-24">
         <div className="mx-auto max-w-[1200px]">
-          <h2 className="text-[28px] font-extrabold leading-tight tracking-[-0.025em] md:text-center md:text-[40px]">
+          <h2 data-landing-reveal="text" className="text-[28px] font-extrabold leading-tight tracking-[-0.025em] md:text-center md:text-[40px]">
             Setiap pengamatan punya cerita
           </h2>
           <article className="sticker-card mt-8 grid gap-6 bg-tint p-5 md:mt-10 md:grid-cols-2 md:gap-10 md:p-9">
@@ -97,7 +99,7 @@ export default function Home() {
                 Warga Pulang Pisau · identitas dilindungi
               </p>
               <p className="text-[13px] font-extrabold text-earth">Apa</p>
-              <div className="relative h-52 overflow-hidden rounded-2xl border-2 border-forest md:h-72">
+              <div data-landing-reveal="curtain" className="relative h-52 overflow-hidden rounded-2xl border-2 border-forest md:h-72">
                 <Image src="/photos/sebangau-rawa.jpg" alt="Foto simulasi pengamatan asap di lahan gambut" fill sizes="(min-width: 768px) 540px, 100vw" className="object-cover" />
                 <span className="absolute left-[55%] top-[12%] h-36 w-40 rounded-full bg-[#e9e6e0]/80 blur-2xl" aria-hidden="true" />
                 <span className="absolute bottom-3 left-3 rounded-full bg-ink/85 px-3 py-1.5 font-mono text-xs text-white">
@@ -123,9 +125,9 @@ export default function Home() {
                 controlsClassName="absolute right-3 top-3"
                 className="h-48 w-full rounded-2xl border-2 border-forest md:h-64"
               />
-              <p className="text-[15px] font-bold md:text-base">Area perkiraan di sekitar Pulang Pisau, Kalimantan Tengah</p>
+              <p data-landing-reveal="slide" className="text-[15px] font-bold md:text-base">Area perkiraan di sekitar Pulang Pisau, Kalimantan Tengah</p>
               <p className="text-[13px] font-extrabold text-earth">Kapan</p>
-              <p className="font-mono text-[15px]">8 Nov 2026 · 13:58 WIB</p>
+              <p data-landing-reveal="slide" data-motion-order="1" className="font-mono text-[15px]">8 Nov 2026 · 13:58 WIB</p>
               <p className="text-[13px] font-extrabold text-earth">Seberapa kuat?</p>
               <EvidenceLadder incident={featured} labels="summary" />
             </div>
@@ -139,7 +141,7 @@ export default function Home() {
           <div className="flex items-end justify-between px-5 md:px-8">
             <div>
               <SimBadge />
-              <h2 className="mt-3 text-[26px] font-extrabold tracking-[-0.03em] md:text-[46px]">Kejadian terbaru</h2>
+              <h2 data-landing-reveal="text" className="mt-3 text-[26px] font-extrabold tracking-[-0.03em] md:text-[46px]">Kejadian terbaru</h2>
             </div>
             <Link href="/pantau" className="btn border-2 border-forest bg-white px-5 py-3 text-[15px] text-forest">
               <span className="hidden sm:inline">Buka peta lengkap</span>
@@ -148,9 +150,11 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-7 flex snap-x gap-4 overflow-x-auto px-5 pb-3 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-8">
-            {recent.map((i) => (
+            {recent.map((i, index) => (
               <Link
                 key={i.id}
+                data-landing-reveal="slide"
+                data-motion-order={index}
                 href={`/kejadian/${i.id}`}
                 className="sticker-card w-[280px] shrink-0 snap-start overflow-hidden transition hover:-translate-y-1 md:w-auto"
               >
@@ -171,15 +175,15 @@ export default function Home() {
       {/* Tiga langkah */}
       <section id="edukasi" className="bg-sky-soft px-5 py-14 md:py-24">
         <div className="mx-auto max-w-[1200px] text-center">
-          <h2 className="text-[28px] font-extrabold tracking-[-0.025em] md:text-[40px]">Semudah tiga langkah</h2>
+          <h2 data-landing-reveal="text" className="text-[28px] font-extrabold tracking-[-0.025em] md:text-[40px]">Semudah tiga langkah</h2>
           <ol className="mt-9 grid gap-9 md:grid-cols-3 md:gap-10">
-            {steps.map((s) => (
+            {steps.map((s, index) => (
               <li key={s.n} className="flex flex-col items-center gap-3">
-                <span className={`grid h-14 w-14 place-items-center rounded-full border-2 border-forest ${s.bg} text-2xl font-extrabold text-forest md:h-16 md:w-16 md:text-[28px]`}>
+                <span data-landing-reveal="stamp" data-motion-order={index} className={`grid h-14 w-14 place-items-center rounded-full border-2 border-forest ${s.bg} text-2xl font-extrabold text-forest md:h-16 md:w-16 md:text-[28px]`}>
                   {s.n}
                 </span>
-                <h3 className="text-[22px] font-extrabold md:text-[26px]">{s.title}</h3>
-                <p className="max-w-[340px] text-base font-medium leading-relaxed text-ink-2 md:text-[17px]">{s.text}</p>
+                <h3 data-landing-reveal="slide" data-motion-order={index + 1} className="text-[22px] font-extrabold md:text-[26px]">{s.title}</h3>
+                <p data-landing-reveal="slide" data-motion-order={index + 2} className="max-w-[340px] text-base font-medium leading-relaxed text-ink-2 md:text-[17px]">{s.text}</p>
               </li>
             ))}
           </ol>
