@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/* Hutan Riang: palet, tipografi, dan bentuk WANA */
+@theme {
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --color-paper: #fbfdf8;
+  --color-tint: #f0f7ec;
+  --color-ink: #13261b;
+  --color-ink-2: #4b5e52;
+  --color-line: #dce8d6;
+  --color-control: #7c8c80;
+
+  --color-leaf: #1e8a4c;
+  --color-forest: #0e4d2c;
+  --color-forest-deep: #0a3a21;
+  --color-sprout: #d4f0c4;
+  --color-moss: #a6db8c;
+  --color-sun: #ffc83d;
+  --color-sun-soft: #fff4d6;
+  --color-sky: #7ccbf0;
+  --color-sky-soft: #e3f4fc;
+  --color-earth: #8b5e3c;
+  --color-earth-soft: #f6ede3;
+  --color-blossom: #f7a8c4;
+
+  --color-fire: #d63a25;
+  --color-fire-ink: #b12a18;
+  --color-fire-soft: #fde7e3;
+  --color-smoke: #6f6a63;
+  --color-smoke-soft: #efedea;
+  --color-ai: #2f74a8;
+  --color-ai-ink: #245e8a;
+  --color-ai-soft: #e4f0f9;
+  --color-support: #7b57b5;
+  --color-support-ink: #5e3f96;
+  --color-support-soft: #efe8f8;
+  --color-verified: #0f7a74;
+  --color-pending: #a36a00;
+  --color-pending-soft: #fcf0d6;
+  --color-stale: #69756d;
+  --color-water: #cfe0e6;
+
+  --shadow-sticker: 0 4px 0 0 #0e4d2c;
+  --shadow-sticker-sm: 0 3px 0 0 #0e4d2c;
+  --shadow-float: 0 14px 34px -8px rgb(19 38 27 / 0.22);
+  --shadow-soft: 0 6px 18px -6px rgb(19 38 27 / 0.16);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full font-bold transition
+    focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sun;
+}
+/* Aksi melapor: pill kuning dengan bayangan stiker */
+@utility btn-report {
+  @apply btn border-2 border-forest bg-sun text-forest shadow-sticker
+    hover:-translate-y-px active:translate-y-0.5 active:shadow-none;
+}
+@utility btn-primary {
+  @apply btn bg-leaf text-white hover:bg-forest;
+}
+@utility btn-outline {
+  @apply btn border border-control bg-white text-ink hover:bg-tint;
+}
+@utility btn-ghost-light {
+  @apply btn border-2 border-white bg-white/10 text-white backdrop-blur-sm hover:bg-white/20;
+}
+@utility chip {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-control bg-white px-3.5 py-2
+    text-sm font-semibold text-ink transition hover:bg-tint;
+}
+@utility chip-active {
+  @apply chip border-leaf bg-leaf font-bold text-white hover:bg-forest;
+}
+@utility card {
+  @apply rounded-3xl border border-line bg-white;
+}
+@utility sticker-card {
+  @apply rounded-3xl border-2 border-forest bg-white shadow-sticker;
+}
+@utility eyebrow {
+  @apply font-mono text-xs font-medium text-earth;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(47 116 168 / 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 12px rgb(47 116 168 / 0);
+  }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 1.6s ease-out infinite;
+}
