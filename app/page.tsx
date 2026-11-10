@@ -178,17 +178,26 @@ export default function Home() {
 
       {/* Tiga langkah */}
       <section id="edukasi" className="overflow-hidden bg-sky-soft px-5 py-14 md:py-20">
-        <div className="relative mx-auto max-w-[1600px] pb-32 text-center xl:px-[200px] xl:pb-0 2xl:px-[240px]">
-          <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-0 w-28 sm:w-32 xl:bottom-auto xl:top-1/2 xl:w-[190px] xl:-translate-y-1/2 2xl:w-[230px]">
+        <div className="relative mx-auto max-w-[1600px] text-center xl:px-[200px] 2xl:px-[240px]">
+          <div aria-hidden="true" className="pointer-events-none absolute left-0 top-1/2 hidden w-[190px] -translate-y-1/2 xl:block 2xl:w-[230px]">
             <Image src="/mascot/guide.png" alt="" width={280} height={280} sizes="(min-width: 1536px) 230px, (min-width: 1280px) 190px, 128px" className="h-auto w-full object-contain" />
           </div>
-          <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-0 w-28 sm:w-32 xl:bottom-auto xl:top-1/2 xl:w-[190px] xl:-translate-y-1/2 2xl:w-[230px]">
+          <div aria-hidden="true" className="pointer-events-none absolute right-0 top-1/2 hidden w-[190px] -translate-y-1/2 xl:block 2xl:w-[230px]">
             <Image src="/mascot/care.png" alt="" width={280} height={280} sizes="(min-width: 1536px) 230px, (min-width: 1280px) 190px, 128px" className="h-auto w-full object-contain" />
           </div>
           <h2 data-landing-reveal="text" className="text-[28px] font-extrabold tracking-[-0.025em] md:text-[40px]">Semudah tiga langkah</h2>
           <ol className="mt-9 grid gap-9 md:grid-cols-3 md:gap-10">
             {steps.map((s, index) => (
-              <li key={s.n} className="flex flex-col items-center gap-3">
+              <li key={s.n} className="relative flex flex-col items-center gap-3">
+                {index !== 1 && (
+                  <Image
+                    src={index === 0 ? "/mascot/guide.png" : "/mascot/care.png"}
+                    alt=""
+                    width={72}
+                    height={72}
+                    className={`pointer-events-none absolute -top-2 h-16 w-16 object-contain sm:h-[72px] sm:w-[72px] xl:hidden ${index === 0 ? "right-[calc(50%+64px)]" : "left-[calc(50%+64px)]"}`}
+                  />
+                )}
                 <span data-landing-reveal="stamp" data-motion-order={index} className={`grid h-14 w-14 place-items-center rounded-full border-2 border-forest ${s.bg} text-2xl font-extrabold text-forest md:h-16 md:w-16 md:text-[28px]`}>
                   {s.n}
                 </span>
