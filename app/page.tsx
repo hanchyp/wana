@@ -69,7 +69,10 @@ export default function Home() {
       {/* Kemampuan */}
       <section id="cara-kerja" className="bg-tint px-5 py-14 md:py-20">
         <div className="mx-auto max-w-[1312px]">
-          <h2 data-landing-reveal="text" className="text-[26px] font-extrabold tracking-[-0.02em] md:text-center md:text-4xl">Dengan WANA, kamu bisa:</h2>
+          <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center sm:gap-6">
+            <Image src="/mascot/observe.png" alt="Maskot WANA mengamati dengan teropong" width={176} height={176} sizes="176px" className="h-36 w-36 object-contain md:h-44 md:w-44" />
+            <h2 data-landing-reveal="text" className="text-[26px] font-extrabold tracking-[-0.02em] md:text-4xl">Dengan WANA, kamu bisa:</h2>
+          </div>
           <ul className="mt-8 grid gap-5 md:mt-11 md:grid-cols-4 md:gap-8">
             {abilities.map((a, index) => (
               <li key={a.title} data-landing-reveal="bounce" data-motion-order={index} className="flex items-center gap-4 md:flex-col md:text-center">
@@ -174,8 +177,14 @@ export default function Home() {
       </section>
 
       {/* Tiga langkah */}
-      <section id="edukasi" className="bg-sky-soft px-5 py-14 md:py-24">
-        <div className="mx-auto max-w-[1200px] text-center">
+      <section id="edukasi" className="overflow-hidden bg-sky-soft px-5 py-14 md:py-20">
+        <div className="relative mx-auto max-w-[1600px] pb-32 text-center xl:px-[200px] xl:pb-0 2xl:px-[240px]">
+          <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-0 w-28 sm:w-32 xl:bottom-auto xl:top-1/2 xl:w-[190px] xl:-translate-y-1/2 2xl:w-[230px]">
+            <Image src="/mascot/guide.png" alt="" width={280} height={280} sizes="(min-width: 1536px) 230px, (min-width: 1280px) 190px, 128px" className="h-auto w-full object-contain" />
+          </div>
+          <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-0 w-28 sm:w-32 xl:bottom-auto xl:top-1/2 xl:w-[190px] xl:-translate-y-1/2 2xl:w-[230px]">
+            <Image src="/mascot/care.png" alt="" width={280} height={280} sizes="(min-width: 1536px) 230px, (min-width: 1280px) 190px, 128px" className="h-auto w-full object-contain" />
+          </div>
           <h2 data-landing-reveal="text" className="text-[28px] font-extrabold tracking-[-0.025em] md:text-[40px]">Semudah tiga langkah</h2>
           <ol className="mt-9 grid gap-9 md:grid-cols-3 md:gap-10">
             {steps.map((s, index) => (
