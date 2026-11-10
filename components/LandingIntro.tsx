@@ -1,59 +1,23 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Logo } from "@/components/Brand";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 
-const videoSelector = "[data-landing-video]";
+
 
 export function LandingIntro({ children }: { children: ReactNode }) {
-  const content = useRef<HTMLDivElement>(null);
+
   const [loading, setLoading] = useState(true);
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)", true);
   const router = useRouter();
 
   useEffect(() => {
-    const page = content.current;
-    if (!page) return;
-
-    const listeners = new AbortController();
-    const { signal } = listeners;
-    let minTime: number;
-    const finish = () => {
-      window.clearTimeout(deadline);
-      window.clearTimeout(minTime);
-      listeners.abort();
-      setLoading(false);
-    };
-
-    const deadline = window.setTimeout(finish, 4500);
-    const minimum = new Promise<void>((resolve) => {
-      minTime = window.setTimeout(resolve, 700);
-    });
-    const images = Array.from(page.querySelectorAll("img"), (image) => image.decode());
-    const video = new Promise<void>((resolve) => {
-      const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-      const check = () => {
-        const element = page.querySelector<HTMLVideoElement>(videoSelector);
-        if (preference.matches || (element && (element.readyState >= 2 || element.error))) resolve();
-      };
-      page.addEventListener("loadeddata", check, { capture: true, signal });
-      page.addEventListener("error", check, { capture: true, signal });
-      preference.addEventListener("change", check, { signal });
-      check();
-    });
-
-    void Promise.allSettled([minimum, document.fonts.ready, video, ...images]).then(() => {
-      if (!signal.aborted) finish();
-    });
-
-    return () => {
-      listeners.abort();
-      window.clearTimeout(deadline);
-      window.clearTimeout(minTime);
-    };
+    const timer = window.setTimeout(() => setLoading(false), 1100);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -63,26 +27,48 @@ export function LandingIntro({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div ref={content} inert={loading} className="contents">{children}</div>
+      <div inert={loading} className="contents">{children}</div>
       <AnimatePresence>
         {loading && (
           <motion.div
-            className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-forest"
+            className="fixed inset-0 z-[100] isolate overflow-hidden bg-[#e8efdc]"
             role="status"
             aria-label="Memuat beranda WANA"
             exit={reduceMotion ? { opacity: 0, transition: { duration: 0 } } : {
               y: "-100%",
-              transition: { duration: 0.65, ease: [0.76, 0, 0.24, 1] },
+              transition: { duration: 0.3, ease: [0.76, 0, 0.24, 1] },
             }}
           >
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.12]" style={{ backgroundImage: "linear-gradient(#44613a 1px, transparent 1px), linear-gradient(90deg, #44613a 1px, transparent 1px)", backgroundSize: "56px 56px" }} />
             <motion.div
-              animate={reduceMotion ? { scale: 1.65 } : {
-                scale: [0.2, 1.85, 1.65],
+              className="absolute inset-x-0 top-[28%] z-10 flex justify-center sm:top-[35%]"
+              animate={reduceMotion ? { scale: 1 } : {
+                scale: [0.85, 1.04, 1],
                 rotate: [-8, 2, 0],
                 transition: { duration: 0.56, times: [0, 0.72, 1] },
               }}
             >
-              <Logo tone="light" decorative />
+              <Logo size="intro" decorative />
+            </motion.div>
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-[-12vw] left-[-18vw] w-[85vw] origin-bottom sm:bottom-[-22vh] sm:left-[-12vw] sm:w-[min(62vw,90vh)]"
+              key={`mascot-left-${reduceMotion}`}
+              initial={reduceMotion ? false : { x: "-35%", y: "100%", rotate: -12, opacity: 0 }}
+              animate={{ x: 0, y: 0, rotate: 15, opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Image src="/mascot/welcome.png" alt="" width={1254} height={1254} sizes="(min-width: 640px) 62vw, 85vw" loading="eager" className="h-auto w-full" />
+            </motion.div>
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-[-12vw] right-[-18vw] w-[85vw] origin-bottom sm:bottom-[-22vh] sm:right-[-12vw] sm:w-[min(62vw,90vh)]"
+              key={`mascot-right-${reduceMotion}`}
+              initial={reduceMotion ? false : { x: "35%", y: "100%", rotate: 12, opacity: 0 }}
+              animate={{ x: 0, y: 0, rotate: -15, opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0 : 0.65, delay: reduceMotion ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Image src="/mascot/observe.png" alt="" width={1254} height={1254} sizes="(min-width: 640px) 62vw, 85vw" loading="eager" className="h-auto w-full -scale-x-100" />
             </motion.div>
           </motion.div>
         )}

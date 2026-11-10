@@ -17,7 +17,7 @@ export function LandingNav() {
   return (
     <header className="absolute inset-x-0 top-0 z-30">
       <div className="mx-auto flex h-20 max-w-[1312px] items-center justify-between px-5 md:h-24 md:px-8">
-        <Logo tone="light" />
+        <Logo tone="white" wordmark />
         <nav className="hidden items-center gap-9 md:flex" aria-label="Utama">
           {links.map((l) => (
             <Link key={l.label} href={l.href} className="text-base font-semibold text-white/95 hover:text-white">

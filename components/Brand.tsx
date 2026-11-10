@@ -1,34 +1,34 @@
 import Link from "next/link";
+import Image from "next/image";
 
-export function Logo({ tone = "dark", size = "md", decorative = false }: { tone?: "dark" | "light"; size?: "sm" | "md"; decorative?: boolean }) {
-  const box = size === "sm" ? "h-9 w-9 rounded-xl" : "h-10 w-10 rounded-[13px]";
+export function Logo({ tone = "color", size = "md", wordmark = false, decorative = false }: {
+  tone?: "color" | "white";
+  size?: "sm" | "md" | "lg" | "intro";
+  wordmark?: boolean;
+  decorative?: boolean;
+}) {
+  const dimension = size === "intro" ? 200 : size === "lg" ? 72 : size === "sm" ? 52 : 48;
   const mark = (
     <>
-      <span
-        className={`${box} grid place-items-center border-2 bg-leaf ${tone === "light" ? "border-white" : "border-forest"}`}
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M3 21C3 10.5 10.5 3 21 3C21 13.5 13.5 21 3 21Z"
-            fill="#ffc83d"
-            stroke="#0e4d2c"
-            strokeWidth="1.8"
-            strokeLinejoin="round"
-          />
-          <path d="M3 21L13 11" stroke="#0e4d2c" strokeWidth="1.8" strokeLinecap="round" />
-        </svg>
-      </span>
-      <span
-        className={`text-[27px] font-extrabold leading-none tracking-[-0.03em] ${tone === "light" ? "text-white" : "text-forest"}`}
-      >
-        wana
-      </span>
+      <Image
+        src="/wana-logo-transparent.png"
+        alt=""
+        width={dimension}
+        height={dimension}
+        sizes={`${dimension}px`}
+        className={`shrink-0 object-contain ${tone === "white" ? "brightness-0 invert" : ""}`}
+      />
+      {wordmark && (
+        <span className={`text-[30px] font-extrabold leading-none tracking-[-0.04em] ${tone === "white" ? "text-white" : "text-forest"}`}>
+          wana
+        </span>
+      )}
     </>
   );
   return decorative ? (
-    <span aria-hidden="true" className="inline-flex items-center gap-2.5">{mark}</span>
+    <span aria-hidden="true" className="inline-flex shrink-0 items-center gap-1.5">{mark}</span>
   ) : (
-    <Link href="/" className="inline-flex items-center gap-2.5" aria-label="WANA, ke beranda">{mark}</Link>
+    <Link href="/" className="inline-flex shrink-0 items-center gap-1.5 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4" aria-label="WANA, ke beranda">{mark}</Link>
   );
 }
 
